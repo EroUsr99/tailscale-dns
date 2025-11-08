@@ -4,12 +4,12 @@
 
 services:
   dnsmasq:
-    image: 4km3/dnsmasq:2.85-r2
+    image: strm/dnsmasq
     container_name: tailscale-dns
     restart: unless-stopped
 
     # Override default command to explicitly use our config file
-    command: ["-k", "-C", "/etc/dnsmasq.conf"]
+    command: ["-C", "/etc/dnsmasq.conf", "--no-daemon"]
 
     # Bind to Tailscale IP only (not public internet)
     ports:
