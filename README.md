@@ -2,6 +2,8 @@
 
 Lightweight DNS server that makes `*.erodev.cloud` domains resolve to Tailscale IP addresses instead of public IPs. This enables secure access to services over Tailscale without exposing them to the public internet.
 
+> **Test deployment**: Verifying webhook auto-deploy functionality
+
 ## Overview
 
 **Problem Solved:**
