@@ -1,0 +1,34 @@
+# Tailscale Split DNS - CoreDNS Configuration
+
+# Handle erodev.cloud and all subdomains
+erodev.cloud {
+    # Enable logging
+    log
+
+    # Enable errors
+    errors
+
+    # Return Tailscale IP for all *.erodev.cloud queries
+    template IN A {
+        answer "{{ .Name }} 60 IN A 100.116.229.118"
+    }
+
+    template IN AAAA {
+        rcode NOERROR
+    }
+}
+
+# Forward all other queries to upstream DNS
+. {
+    # Enable logging
+    log
+
+    # Enable errors
+    errors
+
+    # Forward to Cloudflare DNS
+    forward . 1.1.1.1 1.0.0.1
+
+    # Enable caching
+    cache 30
+}

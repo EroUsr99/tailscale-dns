@@ -3,31 +3,25 @@
 # Returns Tailscale IP (100.116.229.118) instead of public IP
 
 services:
-  dnsmasq:
-    image: strm/dnsmasq
+  coredns:
+    image: coredns/coredns:latest
     container_name: tailscale-dns
     restart: unless-stopped
 
-    # Override default command to explicitly use our config file
-    command: ["-C", "/etc/dnsmasq.conf", "--no-daemon"]
+    # Use our custom Corefile configuration
+    command: ["-conf", "/etc/coredns/Corefile"]
 
-    # Bind to localhost only for testing
-    # TODO: Restrict via firewall instead of Docker binding
+    # Bind to Tailscale IP for production use
     ports:
-      - "127.0.0.1:5353:53/tcp"
-      - "127.0.0.1:5353:53/udp"
+      - "100.116.229.118:53:53/tcp"
+      - "100.116.229.118:53:53/udp"
 
     volumes:
-      - ./dnsmasq.conf:/etc/dnsmasq.conf:ro
-
-    # Capabilities required for DNS operations
-    cap_add:
-      - NET_ADMIN
-      - NET_RAW
+      - ./Corefile:/etc/coredns/Corefile:ro
 
     # Health check
     healthcheck:
-      test: ["CMD", "nslookup", "n8n.erodev.cloud", "127.0.0.1"]
+      test: ["CMD", "sh", "-c", "nc -z 127.0.0.1 53 || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3

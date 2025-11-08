@@ -10,7 +10,7 @@ Lightweight DNS server that makes `*.erodev.cloud` domains resolve to Tailscale 
 - Without changing public DNS or opening firewall ports
 
 **Solution:**
-- DNS server listens ONLY on Tailscale interface (`100.116.229.118:53`)
+- CoreDNS server listens ONLY on Tailscale interface (`100.116.229.118:53`)
 - Tailscale clients are configured to use this DNS for `erodev.cloud` queries
 - All `*.erodev.cloud` domains resolve to Tailscale IP
 - Public internet still sees the public IP (or nothing)
@@ -26,7 +26,7 @@ Tailscale (sees domain restriction: erodev.cloud)
     ↓
     Forwards to: 100.116.229.118:53
     ↓
-DNSMasq (this server)
+CoreDNS (this server)
     ↓
     Returns: 100.116.229.118
     ↓
@@ -106,16 +106,9 @@ After deploying the DNS server:
 
 ## Adding New Services
 
-Edit `dnsmasq.conf` and add a line:
+**No configuration needed!** CoreDNS automatically resolves ALL `*.erodev.cloud` domains to the Tailscale IP (`100.116.229.118`).
 
-```conf
-address=/new-service.erodev.cloud/100.116.229.118
-```
-
-Then restart:
-```bash
-docker-compose restart
-```
+Just configure your service in Traefik/Dokploy with the desired domain name, and it will work immediately.
 
 ## Security
 
@@ -152,9 +145,9 @@ tailscale status --json | jq .MagicDNS
 
 ## Configuration Files
 
-- `docker-compose.yml` - Docker Compose configuration
-- `dnsmasq.conf` - DNS server configuration (add domains here)
-- `.env.example` - Environment variables template
+- [docker-compose.yml](docker-compose.yml) - Docker Compose configuration
+- [Corefile](Corefile) - CoreDNS configuration (wildcard DNS for *.erodev.cloud)
+- `.env.example` - Environment variables template (optional)
 
 ## Maintenance
 
@@ -174,7 +167,7 @@ docker-compose down
 ```
 
 ### Update Configuration
-1. Edit `dnsmasq.conf`
+1. Edit `Corefile` (if needed - default config handles all *.erodev.cloud)
 2. Run `docker-compose restart`
 
 ## Integration with Traefik
@@ -186,8 +179,8 @@ This DNS server just handles name resolution - Traefik handles the actual routin
 ## Resources
 
 - [Tailscale Split DNS Documentation](https://tailscale.com/kb/1054/dns/)
-- [DNSMasq Documentation](https://thekelleys.org.uk/dnsmasq/doc.html)
-- [Docker DNSMasq Image](https://github.com/4km3/dnsmasq)
+- [CoreDNS Documentation](https://coredns.io/manual/toc/)
+- [CoreDNS Plugins](https://coredns.io/plugins/)
 
 ## License
 
