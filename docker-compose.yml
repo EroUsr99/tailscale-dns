@@ -8,6 +8,9 @@ services:
     container_name: tailscale-dns
     restart: unless-stopped
 
+    # Override default command to explicitly use our config file
+    command: ["-k", "-C", "/etc/dnsmasq.conf"]
+
     # Bind to Tailscale IP only (not public internet)
     ports:
       - "100.116.229.118:53:53/tcp"
