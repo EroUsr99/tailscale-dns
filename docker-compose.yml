@@ -1,0 +1,46 @@
+# Tailscale Split DNS Server
+# Provides DNS resolution for *.erodev.cloud domains over Tailscale
+# Returns Tailscale IP (100.116.229.118) instead of public IP
+
+services:
+  dnsmasq:
+    image: 4km3/dnsmasq:2.85-r2
+    container_name: tailscale-dns
+    restart: unless-stopped
+
+    # Bind to Tailscale IP only (not public internet)
+    ports:
+      - "100.116.229.118:53:53/tcp"
+      - "100.116.229.118:53:53/udp"
+
+    volumes:
+      - ./dnsmasq.conf:/etc/dnsmasq.conf:ro
+
+    # Capabilities required for DNS operations
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+
+    # Health check
+    healthcheck:
+      test: ["CMD", "nslookup", "n8n.erodev.cloud", "127.0.0.1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+
+    # Logging
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+    # Network configuration
+    networks:
+      - tailscale-dns
+
+networks:
+  tailscale-dns:
+    name: tailscale-dns
+    driver: bridge

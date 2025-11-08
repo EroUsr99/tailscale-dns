@@ -1,0 +1,17 @@
+# Environment files
+.env
+
+# Logs
+*.log
+
+# Docker volumes
+volumes/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
