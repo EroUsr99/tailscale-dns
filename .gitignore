@@ -15,3 +15,6 @@ volumes/
 .idea/
 *.swp
 *.swo
+
+# Original source files (binaries) — only extracted markdown is committed
+context/processed/
