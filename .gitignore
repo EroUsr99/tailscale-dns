@@ -18,3 +18,7 @@ volumes/
 
 # Original source files (binaries) — only extracted markdown is committed
 context/processed/
+
+# Per-session handover files (disclawd#61). HANDOVER.md is a symlink into
+# .handovers/<session-id>.md so concurrent sessions don't overwrite each other.
+.handovers/
